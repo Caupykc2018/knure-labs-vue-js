@@ -1,0 +1,2 @@
+export const GET_ALL_BREEDS = 'GET_ALL_BREEDS';
+export const GET_RANDOM_BREEDS = 'GET_RANDOM_BREEDS';
