@@ -1,5 +1,9 @@
 <template>
-  <div class="container" v-on:click="$emit('click-item', {item, checked})">{{title}}</div>
+  <div
+    class="container"
+    :style="checked && styleChecked"
+    v-on:click="handleClick"
+  >{{item.breed}}</div>
 </template>
 
 <script>
@@ -8,10 +12,6 @@ export default {
   props: {
     item: {
       type: Object,
-      require: true
-    },
-    title: {
-      type: String,
       require: true
     },
     checked: {
@@ -23,10 +23,11 @@ export default {
       default: () => ({
         backgroundColor: 'blue'
       })
+    },
+    handleClick: {
+      type: Function,
+      default: () => null
     }
-  },
-  mounted() {
-    console.log(this.title)
   }
 }
 </script>
@@ -38,5 +39,6 @@ export default {
     align-items: center;
     justify-content: center;
     border: 1px solid lightgray;
+    cursor: pointer;
   }
 </style>

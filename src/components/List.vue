@@ -1,29 +1,28 @@
 <template>
   <div>
     <h3 v-if="title">{{title}}</h3>
+    <h3 v->Ничего</h3>
     <div class="container">
-      <slot
+      <Item
         v-for="(item, index) in items"
-        v-bind="{
-          ...propItemParser(item),
-          key: keyExtractor(keyExtractor(item, index))
-        }"
-        v-on:click-item="clickItem"
+        :item="item"
+        :checked="checked(item)"
+        :key="keyExtractor(item, index)"
+        :handle-click="clickItem(item, checked(item))"
+        :style-checked="styleChecked"
       />
     </div>
   </div>
 </template>
 
 <script>
+import Item from "@/components/Item";
 export default {
   name: "List",
+  components: {Item},
   props: {
     title: {
       type: String
-    },
-    clickItem: {
-      type: Function,
-      default: () => null
     },
     items: {
       type: Array,
@@ -33,9 +32,19 @@ export default {
       type: Function,
       default: (item, index) => index
     },
-    propItemParser: {
+    checked: {
       type: Function,
-      default: (item) => item
+      default: () => false
+    },
+    styleChecked: {
+      type: Object,
+      default: () => ({
+        backgroundColor: 'blue'
+      })
+    },
+    clickItem: {
+      type: Function,
+      default: () => null
     }
   }
 }
@@ -43,7 +52,8 @@ export default {
 
 <style scoped>
   .container {
-    width: 200px;
-    border: 1px solid black;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
   }
 </style>

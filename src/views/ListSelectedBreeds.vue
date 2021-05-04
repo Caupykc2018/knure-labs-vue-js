@@ -1,14 +1,24 @@
 <template>
-  <div>
-    <List :items="allBreeds" :key-extractor="keyExtractor" :prop-item-parser="propItemParser" :click-item="clickItemAllBreeds">
-      <Item />
-    </List>
+  <h3>Выбранные породы</h3>
+  <div class="container">
+    <List
+      :items="allBreeds"
+      :key-extractor="keyExtractor"
+      :click-item="(item, checked) => () => clickAllBreeds(item, checked)"
+      :style-checked="{display: 'none'}"
+      :checked="(item) => checkedAllBreeds(item)"
+    />
+    <List
+      title="Выбранные породы"
+      :items="selectedBreeds"
+      :key-extractor="keyExtractor"
+      :click-item="(item) => () => clickSelectedBreeds(item)"
+    />
   </div>
 </template>
 
 <script>
 import List from "@/components/List";
-import Item from "@/components/Item";
 import {mapActions, mapGetters} from "vuex";
 import {GET_ALL_BREEDS} from "@/constants/actions";
 
@@ -25,32 +35,28 @@ export default {
     keyExtractor(item) {
       return item.breed
     },
-    propItemParser(item) {
-      return {
-        item,
-        checked: this.selectedBreeds.includes(({breed}) => item.breed === breed),
-        title: item.breed
-      }
+    addSelectedBreed(item) {
+      this.selectedBreeds = [...this.selectedBreeds, item];
     },
-    addSelectedBreed({item}) {
-      return () => {
-        this.selectedBreeds = [...this.selectedBreeds, item];
-      }
-    },
-    removeSelectedBreed({item}) {
+    removeSelectedBreed(item) {
       const index = this.allBreeds.findIndex(({name}) => name === item.name);
 
-      return () => {
-        this.selectedBreeds = [...this.selectedBreeds.slice(0, index), ...this.selectedBreeds.slice(index + 1)];
+      this.selectedBreeds = [...this.selectedBreeds.slice(0, index), ...this.selectedBreeds.slice(index + 1)];
+    },
+    checkedAllBreeds(item) {
+      return this.selectedBreeds.some(({breed}) => item.breed === breed);
+    },
+    clickAllBreeds(item, checked) {
+      if (!checked) {
+        this.addSelectedBreed(item);
       }
     },
-    clickItemAllBreeds({item}) {
-      this.addSelectedBreed(item);
+    clickSelectedBreeds(item) {
+      this.removeSelectedBreed(item)
     }
   },
   components: {
     List,
-    Item
   },
   async mounted() {
     this[GET_ALL_BREEDS]();
@@ -59,5 +65,10 @@ export default {
 </script>
 
 <style scoped>
-
+  .container {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
+    margin-top: 10px;
+  }
 </style>
